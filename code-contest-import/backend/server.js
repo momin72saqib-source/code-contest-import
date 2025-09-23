@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const express = require('express');
-const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -13,17 +12,21 @@ const apiRoutes = require('./routes');
 const LeaderboardSocket = require('./sockets/leaderboardSocket');
 
 // Create Express app
-const app = express();
-const server = http.createServer(app);
+app = express();
 
 // Initialize WebSocket
+const server = require('http').createServer(app);
 const leaderboardSocket = new LeaderboardSocket(server);
 
 // Make WebSocket globally accessible for other modules
 global.leaderboardSocket = leaderboardSocket;
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  console.log('✅ MongoDB connected successfully');
+}).catch((error) => {
+  console.error('❌ MongoDB connection error:', error);
+});
 
 // Middleware - CORS FIRST (Allow all origins in development)
 app.use(cors({
@@ -59,7 +62,6 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Stricter rate limiting for auth endpoints
-// Around line 55-65 in server.js - Update the authLimiter
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'production' ? 5 : 100, // 100 attempts in development
@@ -205,16 +207,12 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 API available at http://localhost:${PORT}/api`);
-  console.log(`🔌 WebSocket server running on port ${PORT}`);
-  console.log(`📁 File uploads directory: ${process.env.UPLOAD_PATH || './uploads'}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+// Add debug logs for middleware
+app.use((req, res, next) => {
+  console.log(`➡️  ${req.method} ${req.url}`);
+  next();
 });
 
-// Export for testing or external use
-module.exports = { app, server, leaderboardSocket };
+// Removed Jest-specific code
+
+module.exports = { app, server };

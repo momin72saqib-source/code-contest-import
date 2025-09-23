@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../controllers/authController');
-const { authenticate } = require('../middleware/auth');
+const { authenticate, debugMiddlewareExecution } = require('../middleware/auth');
 const { validate, userSchemas } = require('../middleware/validation');
 
 // Public routes (no authentication required)
@@ -15,6 +15,9 @@ router.get('/profile', authenticate, authController.getProfile);
 router.put('/profile', authenticate, validate(userSchemas.updateProfile), authController.updateProfile);
 router.put('/change-password', authenticate, authController.changePassword);
 router.post('/logout', authenticate, authController.logout);
+
+// Debug route
+router.get('/debug-profile', debugMiddlewareExecution, authenticate, authController.getProfile);
 
 // Health check endpoint
 router.get('/health', (req, res) => {

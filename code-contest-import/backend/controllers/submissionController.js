@@ -91,17 +91,26 @@ const submitSolution = async (req, res) => {
 
     await submission.save();
 
-    // Execute code asynchronously
-    executeSubmission(submission._id, problem);
+    // Execute code asynchronously using Judge0
+    const results = await judge0Service.executeCode({
+      code,
+      language,
+      testCases: problem.testCases
+    });
+
+    // Update submission with results
+    submission.status = results.every(tc => tc.passed) ? 'Accepted' : 'Wrong Answer';
+    submission.results = results;
+    await submission.save();
 
     res.status(201).json({
       success: true,
       data: {
         id: submission._id,
-        status: 'pending',
-        submissionTime: submission.createdAt
+        status: submission.status,
+        results: submission.results
       },
-      message: 'Submission received and being processed'
+      message: 'Submission processed successfully'
     });
 
   } catch (error) {

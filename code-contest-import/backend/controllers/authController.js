@@ -77,7 +77,7 @@ const login = async (req, res) => {
 
     if (validCredential) {
       const token = jwt.sign(
-        { id: validCredential.user.id, email: validCredential.user.email, role: validCredential.user.role },
+        { _id: validCredential.user.id, email: validCredential.user.email, role: validCredential.user.role },
         process.env.JWT_SECRET || 'fallback-secret',
         { expiresIn: '24h' }
       );
@@ -117,7 +117,7 @@ const login = async (req, res) => {
 
     // Database user found and password valid
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
+      { _id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '24h' }
     );

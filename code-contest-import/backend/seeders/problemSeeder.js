@@ -384,8 +384,62 @@ const miscProblems = [
   }
 ];
 
-// Combine all problems
-const allProblems = [
+// Adding more problems to seed 5–10 problems for initial testing
+const additionalProblems = [
+  {
+    title: "Find Median of Two Sorted Arrays",
+    statement: "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays.",
+    description: "The overall run time complexity should be O(log (m+n)).",
+    constraints: "0 <= m, n <= 1000\n-10^6 <= nums1[i], nums2[i] <= 10^6",
+    inputFormat: "First line contains m and n\nSecond line contains m space-separated integers (nums1)\nThird line contains n space-separated integers (nums2)",
+    outputFormat: "Single float representing the median",
+    examples: [
+      {
+        input: "2 2\n1 3\n2 4",
+        output: "2.5",
+        explanation: "The median is (2 + 3) / 2 = 2.5"
+      }
+    ],
+    difficulty: "Hard",
+    tags: ["array", "binary-search", "divide-and-conquer"],
+    category: "Algorithm",
+    timeLimit: 2,
+    memoryLimit: 128,
+    testCases: [
+      { input: "2 2\n1 3\n2 4", expectedOutput: "2.5", isPublic: true, points: 10 },
+      { input: "1 1\n1\n2", expectedOutput: "1.5", isPublic: true, points: 10 },
+      { input: "3 3\n1 2 3\n4 5 6", expectedOutput: "3.5", isPublic: false, points: 10 }
+    ]
+  },
+  {
+    title: "Longest Palindromic Substring",
+    statement: "Given a string s, return the longest palindromic substring in s.",
+    description: "You may assume that the maximum length of s is 1000.",
+    constraints: "1 <= s.length <= 1000",
+    inputFormat: "Single line containing the string s",
+    outputFormat: "Single line containing the longest palindromic substring",
+    examples: [
+      {
+        input: "babad",
+        output: "bab",
+        explanation: "Note that 'aba' is also a valid answer."
+      }
+    ],
+    difficulty: "Medium",
+    tags: ["string", "dynamic-programming"],
+    category: "Algorithm",
+    timeLimit: 2,
+    memoryLimit: 128,
+    testCases: [
+      { input: "babad", expectedOutput: "bab", isPublic: true, points: 10 },
+      { input: "cbbd", expectedOutput: "bb", isPublic: true, points: 10 },
+      { input: "a", expectedOutput: "a", isPublic: false, points: 10 }
+    ]
+  }
+];
+
+// Combine with existing problems
+const problemsToSeed = [
   ...arrayProblems,
   ...linkedListProblems,
   ...treeProblems,
@@ -393,7 +447,8 @@ const allProblems = [
   ...dpProblems,
   ...stackQueueProblems,
   ...hashingProblems,
-  ...miscProblems
+  ...miscProblems,
+  ...additionalProblems
 ];
 
 // Seeding function
@@ -406,7 +461,7 @@ async function seedProblems() {
     console.log('🗑️  Cleared existing problems');
     
     // Add created by field (you'll need to replace with actual admin user ID)
-    const problemsWithCreator = allProblems.map(problem => ({
+    const problemsWithCreator = problemsToSeed.map(problem => ({
       ...problem,
       createdBy: new mongoose.Types.ObjectId(), // Replace with actual admin user ID
       isPublic: true,
@@ -420,7 +475,7 @@ async function seedProblems() {
     }));
     
     // Insert problems
-    const insertedProblems = await Problem.insertMany(problemsWithCreator);
+    const insertedProblems = await Problem.insertMany(problemsToSeed);
     console.log(`✅ Successfully seeded ${insertedProblems.length} problems`);
     
     // Log statistics
@@ -450,7 +505,7 @@ async function seedProblems() {
 // Export for use in other files
 module.exports = {
   seedProblems,
-  allProblems,
+  problemsToSeed,
   arrayProblems,
   linkedListProblems,
   treeProblems,
