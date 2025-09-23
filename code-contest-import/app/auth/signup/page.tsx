@@ -17,16 +17,13 @@ export default function SignUpPage() {
     username: "",
     email: "",
     password: "",
-    fullName: "",
-    university: ""
+    fullName: ""
   })
   const [teacherForm, setTeacherForm] = useState({
     username: "",
     email: "",
     password: "",
-    fullName: "",
-    institution: "",
-    department: ""
+    fullName: ""
   })
   
   const router = useRouter()
@@ -37,6 +34,11 @@ export default function SignUpPage() {
     try {
       const formData = role === "student" ? studentForm : teacherForm
       
+      // Validate required fields
+      if (!formData.username || !formData.email || !formData.password || !formData.fullName) {
+        throw new Error("All fields are required")
+      }
+
       await register({
         username: formData.username,
         email: formData.email,
@@ -53,6 +55,11 @@ export default function SignUpPage() {
       }
     } catch (error) {
       console.error("Sign up failed:", error)
+      if (error instanceof Error) {
+        alert(error.message) // Show error to user
+      } else {
+        alert("Sign up failed. Please try again.") // Fallback message
+      }
     }
     setIsLoading(false)
   }
@@ -95,6 +102,7 @@ export default function SignUpPage() {
                     placeholder="momin123"
                     value={studentForm.username}
                     onChange={(e) => setStudentForm(prev => ({...prev, username: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -104,6 +112,7 @@ export default function SignUpPage() {
                     placeholder="Momin Saqib Ahmed"
                     value={studentForm.fullName}
                     onChange={(e) => setStudentForm(prev => ({...prev, fullName: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -114,6 +123,7 @@ export default function SignUpPage() {
                     placeholder="mominsaqibahmed@gmail.com"
                     value={studentForm.email}
                     onChange={(e) => setStudentForm(prev => ({...prev, email: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -123,6 +133,7 @@ export default function SignUpPage() {
                     type="password"
                     value={studentForm.password}
                     onChange={(e) => setStudentForm(prev => ({...prev, password: e.target.value}))}
+                    required
                   />
                 </div>
                 <Button 
@@ -150,6 +161,7 @@ export default function SignUpPage() {
                     placeholder="prof_momin"
                     value={teacherForm.username}
                     onChange={(e) => setTeacherForm(prev => ({...prev, username: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -159,6 +171,7 @@ export default function SignUpPage() {
                     placeholder="Dr. Momin Saqib Ahmed"
                     value={teacherForm.fullName}
                     onChange={(e) => setTeacherForm(prev => ({...prev, fullName: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -169,6 +182,7 @@ export default function SignUpPage() {
                     placeholder="mominsaqibahmed@gmail.com"
                     value={teacherForm.email}
                     onChange={(e) => setTeacherForm(prev => ({...prev, email: e.target.value}))}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -178,6 +192,7 @@ export default function SignUpPage() {
                     type="password"
                     value={teacherForm.password}
                     onChange={(e) => setTeacherForm(prev => ({...prev, password: e.target.value}))}
+                    required
                   />
                 </div>
                 <Button 
